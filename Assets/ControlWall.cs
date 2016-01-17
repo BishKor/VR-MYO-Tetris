@@ -32,8 +32,8 @@ public class ControlWall : MonoBehaviour {
 	public int[] posy = new int[4];
 	private Color[] colors = new Color[4]{
 		new Color(75.0F/255.0F, 240.0F/255.0F, 252.0F/255.0F, 1.0F), 
-		new Color(254.0F/255.0F, 229.0F/255.0F, 49.0F/255.0F, 1.0F),
-		new Color(8.0F/255.0F, 79.0F/255.0F, 0.0F, 1.0F),
+		new Color(252.0F/255.0F, 252.0F/255.0F, 205.0F/255.0F, 1.0F),
+		new Color(107.0F/255.0F, 255.0F/255.0F, 90.0F/255.0F, 1.0F),
 		new Color(255.0F/255.0F, 66.0F/255.0F, 80.0F/255.0F, 1.0F)
 	};
 	
@@ -142,7 +142,7 @@ public class ControlWall : MonoBehaviour {
 		MovePlayerBlocks();
 	}
 
-	void UpdatePlayerHorizontally(int direction){
+	public void UpdatePlayerHorizontally(int direction){
 		for (int index = 0; index < 4; index++){
 			if (posx[index] + direction > 15 || posx[index] + direction < 0) {
 				return;
