@@ -16,6 +16,8 @@ public class ControlWall : MonoBehaviour {
 		{{-1, 1, 0, 1, 1, 0}, { 1, 1, 1, 0, 0,-1}, {-1, 0, 0,-1, 1,-1}, { 0, 1,-1, 0,-1,-1}}
 	};
 
+	public static COLUMNS = 16;
+	public static ROWS = 24;
 	public float steptime = 0.3F; // seconds
 	public float currentsteptime = 0.0F; // seconds
 	public int playerBlockId = 0;
@@ -29,9 +31,9 @@ public class ControlWall : MonoBehaviour {
 	public int[] posy = new int[4];
 	
 	void Start () {
-		blocks = new Block[16, 24];
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 24; j++) {
+		blocks = new Block[COLUMNS, ROWS];
+		for (int i = 0; i < ROWS; i++) {
+			for (int j = 0; j < COLUMNS; j++) {
 				Transform bl = (Transform) Instantiate(blockPrefab, new Vector3(-8 + i, j, 0), Quaternion.identity);
 				blocks[i,j] = bl.gameObject.GetComponent<Block>();
 				blocks[i,j].SetState("empty");
@@ -61,6 +63,20 @@ public class ControlWall : MonoBehaviour {
 		playerBlockLocation [1] += dy;
 	}
 
+	void MovePlayerBlocks(){
+		for (int x = 0; x < ROWS; x++) {
+			for (int y = 0; y < COLUMNS; y++) {
+				if(blocks[x, y].GetState() == "active"){
+					blocks[x, y].SetState("empty");
+				}
+			}
+		}
+		
+		for (int x = 0; x < 4; x++){
+			blocks[posx[x], posy[x]].SetState("active");
+		}
+	}
+
 	void InitiateNewPlayerBlock(){
 		playerOrient = 1;
 		playerBlockId = (int)Mathf.Floor(Random.Range(0, 7));
@@ -88,20 +104,6 @@ public class ControlWall : MonoBehaviour {
 		}
 	}
 
-	void MovePlayerBlocks(){
-		for (int x = 0; x < 16; x++) {
-			for (int y = 0; y < 24; y++) {
-				if(blocks[x, y].GetState() == "active"){
-					blocks[x, y].SetState("empty");
-				}
-			}
-		}
-
-		for (int x = 0; x < 4; x++){
-			blocks[posx[x], posy[x]].SetState("active");
-		}
-	}
-
 	void UpdatePlayerVertically(){
 		for (int index = 0; index < 4; index++){
 			if (posy[index] - 1 < 0){
@@ -120,7 +122,7 @@ public class ControlWall : MonoBehaviour {
 
 	void UpdatePlayerHorizontally(int direction){
 		for (int index = 0; index < 4; index++){
-			if (posx[index] + direction > 16 || posx[index] + direction < 0) {
+			if (posx[index] + direction > 15 || posx[index] + direction < 0) {
 				return;
 			}
 			if(blocks[posx[index] + direction, posy[index]].GetState() == "filled") {
@@ -190,7 +192,6 @@ public class ControlWall : MonoBehaviour {
 				}
 			}
 		}
-
 		return moveby;
 	}
 
@@ -260,8 +261,8 @@ public class ControlWall : MonoBehaviour {
 	int[] CheckForCompletedRows(){
 		List<int> rows = new List<int>();
 	
-		for (int j = 0; j < 24; j++) {
-			for (int i = 0; i < 16; i++){
+		for (int j = 0; j < ROWS; j++) {
+			for (int i = 0; i < COLUMNS; i++){
 				if (blocks[i,j].GetState() != "filled"){
 					break;
 				} else if (i == 15) {
@@ -281,7 +282,7 @@ public class ControlWall : MonoBehaviour {
 	}
 
 	void EmptyRow(int rownum){
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < COLUMNS; i++) {
 			blocks[i, rownum].SetState("empty");
 		}
 	}
@@ -301,11 +302,11 @@ public class ControlWall : MonoBehaviour {
 		for (int row = 0; row < rows.Length; row++) {
 			EmptyRow(rows[row]);
 		}
-
-		for (int j = 1; j < 24; j++) {
+	
+		for (int j = 1; j < COLUMNS; j++) {
 			if (!rows.Contains(j)){
-				for (int i = 0; i < 16; i++){
-					int nrg = NumRowsGreater(i, rows);
+				for (int i = 0; i < ROWS; i++){
+					int nrg = NumRowsGreater(j, rows);
 
 //					if(blocks[i, j].GetState() != "active") {
 //					}
