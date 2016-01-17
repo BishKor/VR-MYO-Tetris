@@ -98,9 +98,8 @@ public class ControlWall : MonoBehaviour {
 
 	void InitiateNewPlayerBlock(){
 		playerOrient = 1;
-		playerBlockId = (int)Mathf.Floor(Random.Range(0, 7));
-//		colorId = (int)Mathf.Floor(Random.Range(0, 3));
-		colorId = 3;
+		playerBlockId = (int)Mathf.Floor(Random.Range(0.0F, 8.0F));
+		colorId = (int)Mathf.Floor(Random.Range(0.0F, 4.0F));
 		playerBlockLocation [0] = 8;
 		playerBlockLocation [1] = 22;
 
