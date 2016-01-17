@@ -27,7 +27,6 @@ public class Block : MonoBehaviour {
 			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
 			break;
 		}
-		Debug.Log (state);
 	}
 	
 	public string GetState(){
