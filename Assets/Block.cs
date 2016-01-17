@@ -27,12 +27,14 @@ public class Block : MonoBehaviour {
 			this.gameObject.GetComponent<MeshRenderer> ().material.SetColor ("_MKGlowColor", this.color);
 			this.gameObject.GetComponent<MeshRenderer> ().material.SetColor ("_MKGlowTexColor", this.color);
 			this.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_MKGlowPower", 0.2F);
+//			Debug.Log (this.color);
 			break;
 		case "active":
 			this.gameObject.GetComponent<MeshRenderer>().sharedMaterial = Resources.Load("Materials/MKDemoMat2View1", typeof(Material)) as Material;
 			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_MKGlowColor", this.color);
 			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_MKGlowTexColor", this.color);
-			this.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_MKGlowPower", 1.0F);
+			this.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_MKGlowPower", 0.75F);
+//			Debug.Log (this.color);
 			break;
 		}
 	}
