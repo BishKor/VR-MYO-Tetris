@@ -341,10 +341,8 @@ public class ControlWall : MonoBehaviour {
 	public void Slam(){
 		bool slammed = false;
 		while (!slammed) {
-			if(playerBlockLocation[1] - 1 >= 0){
-				if (DoesItFit (playerBlockLocation [0], playerBlockLocation [1] - 1, playerBlockId, playerOrient)) {
+			if(DoesItFit(playerBlockLocation [0], playerBlockLocation [1] - 1, playerBlockId, playerOrient)) {
 					ChangePlayerBlocks(0, -1);
-				}
 			} else {
 				FixBlocks(posx, posy);
 				InitiateNewPlayerBlock();
