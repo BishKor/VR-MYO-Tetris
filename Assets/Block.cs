@@ -33,7 +33,6 @@ public class Block : MonoBehaviour {
 			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_MKGlowColor", this.color);
 			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_MKGlowTexColor", this.color);
 			this.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_MKGlowPower", 1.0F);
-			Debug.Log (this.color);
 			break;
 		}
 	}
