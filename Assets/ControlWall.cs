@@ -16,8 +16,8 @@ public class ControlWall : MonoBehaviour {
 		{{-1, 1, 0, 1, 1, 0}, { 1, 1, 1, 0, 0,-1}, {-1, 0, 0,-1, 1,-1}, { 0, 1,-1, 0,-1,-1}}
 	};
 
-	public static int COLUMNS = 64;
-	public static int ROWS = 24;
+	public static int COLUMNS = 10;
+	public static int ROWS = 20;
 	public float steptime = 0.3F; // seconds
 	public float currentsteptime = 0.0F; // seconds
 	public int playerBlockId = 0;
@@ -101,8 +101,8 @@ public class ControlWall : MonoBehaviour {
 		playerBlockId = (int)Mathf.Floor(Random.Range(0, 7));
 //		colorId = (int)Mathf.Floor(Random.Range(0, 3));
 		colorId = 3;
-		playerBlockLocation [0] = 8;
-		playerBlockLocation [1] = 22;
+		playerBlockLocation [0] = 4;
+		playerBlockLocation [1] = ROWS - 2;
 
 		posx [0] = playerBlockLocation [0]; 
 		posx [1] = playerBlockLocation [0] + lu [playerBlockId, playerOrient, 0];
@@ -145,12 +145,17 @@ public class ControlWall : MonoBehaviour {
 
 	void UpdatePlayerHorizontally(int direction){
 		for (int index = 0; index < 4; index++){
-			if (posx[index] + direction > 15 || posx[index] + direction < 0) {
+/*			if (posx[index] + direction > ROWS-1 || posx[index] + direction < 0) {
 				return;
 			}
 			if(blocks[posx[index] + direction, posy[index]].GetState() == "filled") {
 				return;
-			}
+			}*/
+
+
+		}
+		if (!DoesItFit(playerBlockLocation[0] + direction, playerBlockLocation[1], playerBlockId, playerOrient)){
+			return;
 		}
 		ChangePlayerBlocks (direction, 0);
 		MovePlayerBlocks();
@@ -231,7 +236,9 @@ public class ControlWall : MonoBehaviour {
 		
 		if (testposx.Min () < 0) {
 			return false;
-		} else if (testposx.Max () > COLUMNS-1) {
+		} else if (testposx.Max () > COLUMNS - 1) {
+			return false;
+		} else if (testposy.Min () < 0){
 			return false;
 		} else {
 			for (int index = 0; index < 4; index++){
@@ -284,9 +291,9 @@ public class ControlWall : MonoBehaviour {
 	
 		for (int j = 0; j < ROWS; j++) {
 			for (int i = 0; i < COLUMNS; i++){
-				if (blocks[i,j].GetState() != "filled"){
+				if (blocks[i, j].GetState() != "filled"){
 					break;
-				} else if (i == 15) {
+				} else if (i == COLUMNS - 1) {
 					rows.Add(j);
 				}
 			}
@@ -303,15 +310,15 @@ public class ControlWall : MonoBehaviour {
 	}
 
 	void EmptyRow(int rownum){
-		for (int i = 0; i < COLUMNS; i++) {
-			blocks[i, rownum].SetState("empty");
+		for (int index = 0; index < COLUMNS; index++) {
+			blocks[index, rownum].SetState("empty");
 		}
 	}
 
-	int NumRowsGreater(int i, int[] rows){
+	int NumRowsGreater(int testrow, int[] rows){
 		int nrows = 0;
 		for (int index = 0; index < rows.Length; index++) {
-			if(i > rows[index]){
+			if(testrow > rows[index]){
 				nrows++;
 			}
 		}
@@ -319,14 +326,13 @@ public class ControlWall : MonoBehaviour {
 	}
 
 	void UpdateGrid(int[] rows){
-		Debug.Log (rows);
 		for (int row = 0; row < rows.Length; row++) {
 			EmptyRow(rows[row]);
 		}
 	
-		for (int j = 1; j < COLUMNS; j++) {
+		for (int j = 1; j < ROWS; j++) {
 			if (!rows.Contains(j)){
-				for (int i = 0; i < ROWS; i++){
+				for (int i = 0; i < COLUMNS; i++){
 					int nrg = NumRowsGreater(j, rows);
 					if(blocks[i, j].GetState() != "active"){
 						blocks[i, j-nrg].SetColor(blocks[i, j].GetColor());
@@ -339,7 +345,13 @@ public class ControlWall : MonoBehaviour {
 	}
 
 	public void Slam(){
+
+		for (int index = 0; index < 4; index++){
+			blocks[posx[index], posy[index]].SetState("empty");
+		}
+
 		bool slammed = false;
+
 		while (!slammed) {
 			if(DoesItFit(playerBlockLocation [0], playerBlockLocation [1] - 1, playerBlockId, playerOrient)) {
 					ChangePlayerBlocks(0, -1);
@@ -356,11 +368,11 @@ public class ControlWall : MonoBehaviour {
 			Slam();
 		} else {
 			if (Input.GetKeyDown(KeyCode.RightArrow)) {
-				UpdatePlayerHorizontally(1);
+				UpdatePlayerHorizontally(-1);
 			}
 
 			else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-				UpdatePlayerHorizontally(-1);
+				UpdatePlayerHorizontally(1);
 			}
 
 			if (Input.GetKeyDown(KeyCode.UpArrow)) {
