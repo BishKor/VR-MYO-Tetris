@@ -4,6 +4,7 @@ using System.Collections;
 public class Block : MonoBehaviour {
 
 	public string state; // possible states are "player", "filled", "empty"
+	private Color color;
 
 	// Use this for initialization
 	void Start () {
@@ -18,16 +19,30 @@ public class Block : MonoBehaviour {
 		switch (argState)
 		{
 		case "empty":
-			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.clear);
+			this.gameObject.GetComponent<MeshRenderer> ().sharedMaterial = Resources.Load ("Materials/blockmat", typeof(Material)) as Material;
+			this.gameObject.GetComponent<MeshRenderer> ().material.SetColor ("_Color", Color.clear);
 			break;
 		case "filled":
-			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.blue);
+			this.gameObject.GetComponent<MeshRenderer> ().sharedMaterial = Resources.Load ("Materials/MKDemoMat2View1", typeof(Material)) as Material;
+			this.gameObject.GetComponent<MeshRenderer> ().material.SetColor ("_MKGlowColor", this.color);
+			this.gameObject.GetComponent<MeshRenderer> ().material.SetColor ("_MKGlowTexColor", this.color);
+			this.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_MKGlowPower", 0.2F);
 			break;
 		case "active":
-			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
+			this.gameObject.GetComponent<MeshRenderer>().sharedMaterial = Resources.Load("Materials/MKDemoMat2View1", typeof(Material)) as Material;
+			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_MKGlowColor", this.color);
+			this.gameObject.GetComponent<MeshRenderer>().material.SetColor("_MKGlowTexColor", this.color);
+			this.gameObject.GetComponent<MeshRenderer>().material.SetFloat("_MKGlowPower", 1.0F);
+			Debug.Log (this.color);
 			break;
 		}
-		Debug.Log (state);
+	}
+
+	public void SetColor(Color color){
+		this.color = color;
+	}
+	public Color GetColor(){
+		return color;
 	}
 	
 	public string GetState(){

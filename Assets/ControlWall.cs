@@ -19,6 +19,7 @@ public class ControlWall : MonoBehaviour {
 	public float steptime = 0.5F; // seconds
 	public float currentsteptime = 0.0F; // seconds
 	public int playerBlockId = 0;
+	public int colorId = 0;
 	public int playerOrient = 0;
 	public int movespeed = 1;
 	public int score = 0;
@@ -27,15 +28,28 @@ public class ControlWall : MonoBehaviour {
 	public Transform blockPrefab;
 	public int[] posx = new int[4];
 	public int[] posy = new int[4];
+	private Color[] colors = new Color[4]{
+		new Color(75.0F/255.0F, 240.0F/255.0F, 252.0F/255.0F, 1.0F), 
+		new Color(254.0F/255.0F, 229.0F/255.0F, 49.0F/255.0F, 1.0F),
+		new Color(8.0F/255.0F, 79.0F/255.0F, 0.0F, 1.0F),
+		new Color(255.0F/255.0F, 66.0F/255.0F, 80.0F/255.0F, 1.0F)
+	};
 	
 	void Start () {
-		blocks = new Block[16, 32];
-		for (int i = 0; i < 16; i++) {
+		float r = ((32.0F /Mathf.PI));
+		float theta = 0.0F;
+		float dT = (2*Mathf.PI)/64;
+		blocks = new Block[64, 32];
+		for (int i = 0; i < 64; i++) {
 			for (int j = 0; j < 32; j++) {
-				Transform bl = (Transform) Instantiate(blockPrefab, new Vector3(-8 + i, j, 0), Quaternion.identity);
+				float x = r * Mathf.Cos (theta);
+				float y = r * Mathf.Sin (theta);
+				Transform bl = (Transform) Instantiate(blockPrefab, new Vector3(x, j, y), Quaternion.identity);
+				bl.eulerAngles = new Vector3(0, -theta * (180 / Mathf.PI), 0);
 				blocks[i,j] = bl.gameObject.GetComponent<Block>();
 				blocks[i,j].SetState("empty");
 			}
+			theta += dT;
 		}
 
 		InitiateNewPlayerBlock ();
@@ -61,6 +75,8 @@ public class ControlWall : MonoBehaviour {
 	void InitiateNewPlayerBlock(){
 		playerOrient = 1;
 		playerBlockId = (int)Mathf.Floor(Random.Range(0, 7));
+//		colorId = (int)Mathf.Floor(Random.Range(0, 3));
+		colorId = 3;
 		playerBlockLocation [0] = 8;
 		playerBlockLocation [1] = 30;
 
@@ -78,6 +94,7 @@ public class ControlWall : MonoBehaviour {
 			j + lu[playerBlockId, playerOrient, 5]};
 		
 		for (int x = 0; x < 4; x++){
+			blocks[posx[x], posy[x]].SetColor(colors[colorId]);
 			blocks[posx[x], posy[x]].SetState("active");
 		}
 	}
@@ -89,15 +106,20 @@ public class ControlWall : MonoBehaviour {
 	}
 
 	void MovePlayerBlocks(){
+		int x_t = 0;
+		int y_t = 0;
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 32; y++) {
 				if(blocks[x, y].GetState() == "active"){
 					blocks[x, y].SetState("empty");
+					x_t = x;
+					y_t = y;
 				}
 			}
 		}
 
 		for (int x = 0; x < 4; x++){
+			blocks [posx [x], posy [x]].SetColor (blocks [x_t, y_t].GetColor ());
 			blocks[posx[x], posy[x]].SetState("active");
 		}
 	}
@@ -199,8 +221,6 @@ public class ControlWall : MonoBehaviour {
 	
 	public void RotatePlayer(int direction){
 
-		Debug.Log ("poop");
-
 		int testOrient = playerOrient + direction;
 		if (testOrient > 3) {
 			testOrient = 0;
@@ -270,6 +290,7 @@ public class ControlWall : MonoBehaviour {
 			for (int i = 0; i < 16; i++){
 				int nrg = NumRowsGreater(i, rows);
 				if(blocks[i, j].GetState() != "active"){
+					blocks[i, j-nrg].SetColor(blocks[i, j].GetColor());
 					blocks[i, j-nrg].SetState(blocks[i, j].GetState());
 					blocks[i, j].SetState("empty");
 				}
